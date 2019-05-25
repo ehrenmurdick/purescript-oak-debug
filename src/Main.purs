@@ -4,21 +4,26 @@ import Prelude
   ( Unit
   , (<>)
   , ($)
+  , discard
   , bind
   , show
-  , mempty
   , unit
   , map
+  , mempty
   )
 import Child as C
 import Effect (Effect)
-import Data.Array (length)
+import Effect.Console
+import Data.Array (length, mapWithIndex, take)
 import Styles as S
+import Data.Foldable ( foldr )
 import Oak
   ( runApp
   , App
   , createApp
+  , wrapNextHandler
   )
+import Oak.Html.Events ( onClick )
 import Oak.Html (Html, div, ul, li, text)
 import Oak.Document
   ( appendChildNode
@@ -32,6 +37,7 @@ type Model =
 
 data Msg
   = Wrap C.Msg
+  | ClickAt Int C.Msg
 
 
 view :: Model -> Html Msg
@@ -39,16 +45,23 @@ view model =
   div []
     [ map Wrap (C.view model.cmodel)
     , div [ S.container ]
-      [ ul [ S.ul ] (map showMsg model.msgs)
+      [ ul [ S.ul ] (mapWithIndex showMsg model.msgs)
       , div [] [ text ((show $ length model.msgs) <> " messages") ]
       ]
     ]
 
-showMsg :: C.Msg -> Html Msg
-showMsg msg = li [ S.li ] [ text (show msg) ]
+showMsg :: Int -> C.Msg -> Html Msg
+showMsg i msg = li [ S.li, onClick (ClickAt i msg) ] [ text (show msg) ]
 
 next :: Msg -> Model -> (Msg -> Effect Unit) -> Effect Unit
-next _ _ _ = mempty
+next msg mod h =
+  case msg of
+    Wrap cmsg -> do
+      C.next cmsg mod.cmodel (wrapNextHandler Wrap h)
+    ClickAt pos cmsg -> do
+       logShow pos
+       logShow cmsg
+
 
 update :: Msg -> Model -> Model
 update msg model =
@@ -57,6 +70,11 @@ update msg model =
       { msgs = model.msgs <> [ m ]
       , cmodel = C.update m model.cmodel
       }
+    ClickAt i m -> model
+      { cmodel = foldr C.update (C.init unit) (take i model.msgs)
+      }
+
+-- foldr :: forall a b f. Foldable f => (a -> b -> b) -> b -> f a -> b
 
 
 init :: Unit -> Model

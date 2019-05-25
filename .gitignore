@@ -7,3 +7,5 @@
 /.psc*
 /.purs*
 /.psa*
+app.js
+index.html

@@ -13,6 +13,11 @@ container = style
   , overflow  "auto"
   ]
 
+big :: ∀ a. Attribute a
+big = style
+  [ fontSize "24"
+  ]
+
 ul :: ∀ a. Attribute a
 ul = style
   [ listStyleType "none"

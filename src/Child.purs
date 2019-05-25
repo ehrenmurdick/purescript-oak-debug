@@ -8,7 +8,9 @@ import Prelude
   )
 import Oak.Html.Events (onClick)
 import Effect (Effect)
+import Effect.Console
 import Data.Show (class Show)
+import Styles as S
 import Oak
   ( App
   , createApp
@@ -33,13 +35,13 @@ instance showMsg :: Show Msg where
 view :: Model -> Html Msg
 view model =
   div []
-    [ div [] [ button [ onClick Inc ] [ text "+" ] ]
-    , div [] [ text model.number ]
-    , div [] [ button [ onClick Dec ] [ text "-" ] ]
+    [ div [ S.big ] [ button [ onClick Inc ] [ text "+" ] ]
+    , div [ S.big ] [ text model.number ]
+    , div [ S.big ] [ button [ onClick Dec ] [ text "-" ] ]
     ]
 
 next :: Msg -> Model -> (Msg -> Effect Unit) -> Effect Unit
-next _ _ _ = mempty
+next msg _ _ = logShow msg
 
 update :: Msg -> Model -> Model
 update msg model =
