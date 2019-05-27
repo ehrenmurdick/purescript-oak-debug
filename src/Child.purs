@@ -4,40 +4,47 @@ import Prelude
   ( Unit
   , (+)
   , (-)
+  , (<>)
   , mempty
   )
-import Oak.Html.Events (onClick)
+import Oak.Html.Events (onClick, onInput)
 import Effect (Effect)
 import Effect.Console
+import Oak.Html.Attribute ( style, value )
 import Data.Show (class Show)
 import Styles as S
 import Oak
   ( App
   , createApp
   )
-import Oak.Html (Html, div, text, button)
+import Oak.Html (Html, div, text, button, input)
 
 type Model =
   { number :: Int
+  , message :: String
   }
 
 data Msg
   = Inc
   | Dec
+  | Type String
 
 instance showMsg :: Show Msg where
   show msg =
     case msg of
       Inc -> "Inc"
       Dec -> "Dec"
+      Type str -> "Type " <> str
 
 
 view :: Model -> Html Msg
 view model =
   div []
-    [ div [ S.big ] [ button [ onClick Inc ] [ text "+" ] ]
-    , div [ S.big ] [ text model.number ]
-    , div [ S.big ] [ button [ onClick Dec ] [ text "-" ] ]
+    [ div [ style S.big ] [ button [ onClick Inc ] [ text "+" ] ]
+    , div [ style S.big ] [ text model.number ]
+    , div [ style S.big ] [ button [ onClick Dec ] [ text "-" ] ]
+    , div [] [ input [ onInput Type, value model.message ] [] ]
+    , div [] [ text model.message ]
     ]
 
 next :: Msg -> Model -> (Msg -> Effect Unit) -> Effect Unit
@@ -48,11 +55,13 @@ update msg model =
   case msg of
     Inc -> model { number = model.number + 1 }
     Dec -> model { number = model.number - 1 }
+    Type str -> model { message = str }
 
 
 init :: Unit -> Model
 init _ =
   { number: 0
+  , message: ""
   }
 
 app :: App Model Msg Unit

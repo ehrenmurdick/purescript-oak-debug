@@ -8,7 +8,7 @@
   ],
   "dependencies": {
     "purescript-prelude": "^4.1.1",
-    "purescript-oak": "/home/ehren/workspace/purescript-oak/.git#embedding",
+    "purescript-oak": "/home/ehren/workspace/purescript-oak/.git#master",
     "purescript-console": "^4.2.0",
     "purescript-effect": "^2.0.1"
   },
