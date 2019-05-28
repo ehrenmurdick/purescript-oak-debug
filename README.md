@@ -28,78 +28,95 @@ main = do
 
 Full example application below:
 ```purs
-module Main where
+module Main (main) where
 
 import Prelude
   ( Unit
-  , unit
-  , (+)
   , bind
-  , (-)
-  , (<>)
   , mempty
+  , show
+  , (<>)
   )
-import Oak.Html.Events (onClick, onInput)
-import Effect (Effect)
-import Effect.Console
-import Oak.Html.Attribute ( style, value )
+import Oak.Html.Events (onClick)
+import Oak.Debug ( debugApp )
 import Data.Show (class Show)
-import Styles as S
+import Data.Either (Either(..))
+import Effect (Effect)
 import Oak
-  ( App
+  ( runApp
+  , App
   , createApp
-  , runApp
   )
-import Oak.Html (Html, div, text, button, input)
-import Debug ( debugApp )
+import Oak.Html
+  ( Html
+  , div
+  , text
+  , button
+  )
 import Oak.Document
+  ( appendChildNode
+  , getElementById
+  )
+import Oak.Ajax
+  ( get
+  , AjaxError
+  )
 
-type Model =
-  { number :: Int
-  , message :: String
-  }
+
+type Model = { message :: String }
+
+type Response = { text :: String }
 
 data Msg
-  = Inc
-  | Dec
-  | Type String
+  = Get String
+  | GetResult (Either AjaxError Response)
+
 
 instance showMsg :: Show Msg where
   show msg =
     case msg of
-      Inc -> "Inc"
-      Dec -> "Dec"
-      Type str -> "Type " <> str
-
+      Get url -> "Get " <> url
+      GetResult (Left e) -> "GetResult Left " <> show e
+      GetResult (Right r) -> "GetResult Right " <> show r
 
 view :: Model -> Html Msg
 view model =
   div []
-    [ div [ style S.big ] [ button [ onClick Inc ] [ text "+" ] ]
-    , div [ style S.big ] [ text model.number ]
-    , div [ style S.big ] [ button [ onClick Dec ] [ text "-" ] ]
-    , div [] [ input [ onInput Type, value model.message ] [] ]
+    [ div [] [ button [ onClick (Get "1.json") ] [ text "get 1" ] ]
+    , div [] [ button [ onClick (Get "2.json") ] [ text "get 2" ] ]
+    , div [] [ button [ onClick (Get "3.json") ] [ text "get 3" ] ]
     , div [] [ text model.message ]
     ]
 
+
 next :: Msg -> Model -> (Msg -> Effect Unit) -> Effect Unit
-next msg _ _ = logShow msg
+next msg mod h =
+  case msg of
+
+    (GetResult _) -> mempty
+    -- mempty is a "do nothing" effect
+
+    Get url -> get GetResult url h
+    -- send a get request to "/1.json"
+    -- and decode the result into the GetResult message
+    -- Left AjaxError if it failed
+    -- Right a where a is the response type from the server
+    --   if it was successful
 
 update :: Msg -> Model -> Model
 update msg model =
   case msg of
-    Inc -> model { number = model.number + 1 }
-    Dec -> model { number = model.number - 1 }
-    Type str -> model { message = str }
+    Get url                    -> model { message = "getting " <> url <> "..." }
+    (GetResult (Left e))       -> model { message = show e }
+    (GetResult (Right result)) -> model { message = result.text }
 
 
-init :: Unit -> Model
-init _ =
-  { number: 0
-  , message: ""
+init :: Model
+init =
+  { message: ""
   }
 
-app :: App Model Msg Unit
+app :: App Msg Model
 app = createApp
   { init: init
   , view: view
@@ -107,10 +124,9 @@ app = createApp
   , next: next
   }
 
-
 main :: Effect Unit
 main = do
-  rootNode <- runApp (debugApp app) unit
+  rootNode <- runApp (debugApp app)
   container <- getElementById "app"
   appendChildNode container rootNode
 ```
