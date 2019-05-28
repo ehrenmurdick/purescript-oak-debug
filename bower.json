@@ -1,0 +1,24 @@
+{
+  "name": "purescript-oak-debug",
+  "license": "MIT",
+  "description": "Time-travel debugging for Oak applications. Click through event history, and see the state of your app at that point in time!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ehrenmurdick/purescript-oak-debug.git"
+  },
+  "homepage": "https://github.com/ehrenmurdick/purescript-oak-debug",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^4.1.1",
+    "purescript-console": "^4.2.0",
+    "purescript-effect": "^2.0.1"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^4.0.0"
+  }
+}
