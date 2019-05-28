@@ -7,7 +7,6 @@ import Prelude
   , (+)
   , flip
   , show
-  , unit
   , map
   , mempty
   )
@@ -23,7 +22,6 @@ import Data.Foldable ( foldl )
 import Oak
   ( App
   , createApp
-  , wrapNextHandler
   , unwrapApp
   )
 import Oak.Html.Events ( onClick )
@@ -42,7 +40,7 @@ type DebugModel emsg emodel =
   , emodel :: emodel
   , active :: Boolean
   , view :: emodel -> Html emsg
-  , init :: Unit -> emodel
+  , init :: emodel
   , update :: emsg -> emodel -> emodel
   , next :: emsg -> emodel -> (emsg -> Effect Unit) -> Effect Unit
   }
@@ -100,15 +98,15 @@ update msg model =
         }
     ClickAt i -> model
       { active = true
-      , emodel = foldl (flip model.update) (model.init unit) (take (i + 1) model.msgs)
+      , emodel = foldl (flip model.update) model.init  (take (i + 1) model.msgs)
       }
     Init -> model
       { active = true
-      , emodel = model.init unit
+      , emodel = model.init
       }
     Resume -> model
       { active = false
-      , emodel = foldl (flip model.update) (model.init unit) model.msgs
+      , emodel = foldl (flip model.update) model.init  model.msgs
       }
 
 
@@ -121,23 +119,23 @@ next msg model h =
     Init -> mempty
     Resume -> mempty
     Wrap cmsg -> do
-      model.next cmsg model.emodel (wrapNextHandler Wrap h)
+      model.next cmsg model.emodel (map h Wrap)
 
 
 debugApp :: ∀ emsg emodel.
   Show emsg =>
-  App emodel emsg Unit ->
-  App (DebugModel emsg emodel) (DebugMsg emsg) Unit
+  App emsg emodel ->
+  App (DebugMsg emsg) (DebugModel emsg emodel)
 debugApp child =
   let
     bits = unwrapApp child
   in
     createApp
-      { init: \_ ->
+      { init:
         { view: bits.view
         , update: bits.update
         , next: bits.next
-        , emodel: bits.init unit
+        , emodel: bits.init
         , init: bits.init
         , msgs: []
         , active: false
