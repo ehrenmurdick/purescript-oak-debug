@@ -1,4 +1,4 @@
-module Styles where
+module Oak.Styles where
 
 import Oak.Css
 

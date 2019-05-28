@@ -3,6 +3,8 @@ events that have happened in your Oak app, and move forward and backward
 through time! Does not repeat Effects, only uses messages and your update
 function to recreate the model state at that point in time.
 
+![Time travel!](../assets/demo.gif?raw=true)
+
 
 Very easy to use, just bower install this module
 

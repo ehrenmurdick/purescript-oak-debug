@@ -18,7 +18,7 @@ import Data.Array
   , mapWithIndex
   , take
   )
-import Styles as S
+import Oak.Styles as S
 import Data.Foldable ( foldl )
 import Oak
   ( App
