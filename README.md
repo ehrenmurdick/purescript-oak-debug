@@ -1,3 +1,30 @@
+Time-travel for debugging your Oak applications! You'll be able to see all the
+events that have happened in your Oak app, and move forward and backward
+through time! Does not repeat Effects, only uses messages and your update
+function to recreate the model state at that point in time.
+
+
+Very easy to use, just bower install this module
+
+```sh
+bower install purescript-oak-debug
+```
+
+Then import it in your Main.purs and wrap your app in `debugApp` from the
+`Oak.Debug` module like so:
+
+```purs
+main :: Effect Unit
+main = do
+  rootNode <- runApp (debugApp app) unit
+  container <- getElementById "app"
+  appendChildNode container rootNode
+```
+
+
+
+
+Full example application below:
 ```purs
 module Main where
 
