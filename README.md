@@ -1,3 +1,4 @@
+```purs
 module Main where
 
 import Prelude
@@ -83,3 +84,4 @@ main = do
   rootNode <- runApp (debugApp app) unit
   container <- getElementById "app"
   appendChildNode container rootNode
+```
