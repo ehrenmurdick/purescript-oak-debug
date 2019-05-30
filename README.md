@@ -16,15 +16,44 @@ Then import it in your Main.purs and wrap your app in `debugApp` from the
 `Oak.Debug` module like so:
 
 ```purs
+import Oak.Debug (debugApp)
+
 main :: Effect Unit
 main = do
-  rootNode <- runApp (debugApp app) unit
+  rootNode <- runApp (debugApp app) Nothing
   container <- getElementById "app"
   appendChildNode container rootNode
 ```
 
+Finally, define a `Show` instance for your message type. The excellent
+purescript compiler will help you with this part. If you're coming from an
+object oriented language, this is like defining a `toString()` method on a
+class.
+
+```
+import Data.Show ( class Show )
+
+instance showMsg :: Show Msg where
+  show msg =
+    case msg of
+      Inc -> "Inc"
+      Dec -> "Dec"
+```
 
 
+If your app sends a message on `runApp`, wrap it in the
+`Oak.Debug.DebugMsg` value `Wrap` like so:
+
+```purs
+import Oak.Debug (debugApp, DebugMsg(..)) as Debug
+
+main :: Effect Unit
+main = do
+  let initialMessage = Just $ Debug.Wrap MyMessage
+  rootNode <- runApp (Debug.debugApp app) initialMessage
+  container <- getElementById "app"
+  appendChildNode container rootNode
+```
 
 Full example application below:
 ```purs
@@ -36,6 +65,7 @@ import Prelude
   , mempty
   , show
   , (<>)
+  , (>>>)
   )
 import Oak.Html.Events (onClick)
 import Oak.Debug ( debugApp )
@@ -75,9 +105,8 @@ data Msg
 instance showMsg :: Show Msg where
   show msg =
     case msg of
-      Get url -> "Get " <> url
-      GetResult (Left e) -> "GetResult Left " <> show e
-      GetResult (Right r) -> "GetResult Right " <> show r
+      Get       url -> "Get       " <> url
+      GetResult a   -> "GetResult " <> show a
 
 view :: Model -> Html Msg
 view model =
@@ -92,23 +121,15 @@ view model =
 next :: Msg -> Model -> (Msg -> Effect Unit) -> Effect Unit
 next msg mod h =
   case msg of
-
-    (GetResult _) -> mempty
-    -- mempty is a "do nothing" effect
-
-    Get url -> get GetResult url h
-    -- send a get request to "/1.json"
-    -- and decode the result into the GetResult message
-    -- Left AjaxError if it failed
-    -- Right a where a is the response type from the server
-    --   if it was successful
+    GetResult _ -> mempty
+    Get url     -> get url (GetResult >>> h)
 
 update :: Msg -> Model -> Model
 update msg model =
   case msg of
-    Get url                    -> model { message = "getting " <> url <> "..." }
-    (GetResult (Left e))       -> model { message = show e }
-    (GetResult (Right result)) -> model { message = result.text }
+    Get url                  -> model { message = "getting " <> url <> "..." }
+    GetResult (Left e)       -> model { message = show e }
+    GetResult (Right result) -> model { message = result.text }
 
 
 init :: Model
@@ -126,7 +147,7 @@ app = createApp
 
 main :: Effect Unit
 main = do
-  rootNode <- runApp (debugApp app)
+  rootNode <- runApp (debugApp app) Nothing
   container <- getElementById "app"
   appendChildNode container rootNode
 ```
