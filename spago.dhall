@@ -11,7 +11,8 @@ When creating a new Spago project, you can use
 to generate this file without the comments in this block.
 -}
 { name = "oak-debug"
-, dependencies = [ "console", "effect", "oak", "prelude" ]
+, dependencies =
+  [ "arrays", "console", "effect", "foldable-traversable", "oak", "prelude" ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }

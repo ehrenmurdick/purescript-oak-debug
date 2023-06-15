@@ -2,15 +2,22 @@ module Oak.Debug where
 
 import Oak
 
-import Prelude hiding (div)
+import Prelude
+  ( class Show
+  , Unit
+  , flip
+  , map
+  , mempty
+  , show
+  , ($)
+  , (+)
+  , (<>)
+  )
 
 import Data.Array (length, mapWithIndex, take)
 import Data.Foldable (foldl)
-import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.Show (class Show)
 import Effect (Effect)
 import Oak.Html.Attribute (style)
-import Data.Traversable (foldMap)
 
 import Oak.Styles as S
 
