@@ -10,11 +10,9 @@ When creating a new Spago project, you can use
 `spago init --no-comments` or `spago init -C`
 to generate this file without the comments in this block.
 -}
-{ name = "oak-debug"
+{ name = "my-project"
 , dependencies =
   [ "arrays", "console", "effect", "foldable-traversable", "oak", "prelude" ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
-, license = "MIT"
-, repository = "https://github.com/ehrenmurdick/purescript-oak-debug"
 }
