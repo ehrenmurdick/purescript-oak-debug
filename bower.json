@@ -1,0 +1,24 @@
+{
+    "name": "purescript-my-project",
+    "license": [
+        "MIT"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ehrenmurdick/purescript-oak-debug"
+    },
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "output"
+    ],
+    "dependencies": {
+        "purescript-arrays": "^v7.2.1",
+        "purescript-console": "^v6.0.0",
+        "purescript-effect": "^v4.0.0",
+        "purescript-foldable-traversable": "^v6.0.0",
+        "purescript-oak": "^v3.1.0",
+        "purescript-prelude": "^v6.0.1"
+    }
+}
