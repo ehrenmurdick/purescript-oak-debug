@@ -15,4 +15,6 @@ to generate this file without the comments in this block.
   [ "arrays", "console", "effect", "foldable-traversable", "oak", "prelude" ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
+, license = "MIT"
+, repository = "https://github.com/ehrenmurdick/purescript-oak-debug"
 }
