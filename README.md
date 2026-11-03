@@ -6,10 +6,10 @@ function to recreate the model state at that point in time.
 ![Time travel!](../assets/demo.gif?raw=true)
 
 
-Very easy to use, just bower install this module
+Very easy to use, just install this module with Spago
 
 ```sh
-bower install purescript-oak-debug
+spago install oak-debug
 ```
 
 Then import it in your Main.purs and wrap your app in `debugApp` from the

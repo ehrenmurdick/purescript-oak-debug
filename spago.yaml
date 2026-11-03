@@ -1,0 +1,19 @@
+package:
+  name: oak-debug
+  publish:
+    version: 1.2.3
+    license: MIT
+    location:
+      githubOwner: ehrenmurdick
+      githubRepo: purescript-oak-debug
+  dependencies:
+    - arrays: ">=7.2.1 <8.0.0"
+    - effect: ">=4.0.0 <5.0.0"
+    - foldable-traversable: ">=6.0.0 <7.0.0"
+    - oak: ">=3.1.0 <4.0.0"
+    - prelude: ">=6.0.1 <7.0.0"
+  test:
+    main: Test.Main
+    dependencies:
+      - console: ">=6.0.0 <7.0.0"
+workspace: {}
